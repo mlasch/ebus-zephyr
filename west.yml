@@ -9,11 +9,12 @@ manifest:
   projects:
     - name: zephyr
       remote: zephyrproject-rtos
-      revision: v4.1.0
+      revision: main
       import:
         name-allowlist:
           - cmsis
           - fatfs
+          - hal_nordic
           - hal_nxp
           - mbedtls
           - mcuboot
@@ -22,5 +23,6 @@ manifest:
           - tinycbor
           - tinycrypt
           - zcbor
+          - zephyr-lang-rust
   self:
     path: application
