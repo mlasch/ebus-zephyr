@@ -1,0 +1,13 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* Use the arduino header serial pins for the eBUS */
+&flexcomm2_lpuart2 {
+        status = "okay";
+
+        ebus0 {
+                compatible = "zephyr,ebus-serial";
+                status = "okay";
+        };
+};

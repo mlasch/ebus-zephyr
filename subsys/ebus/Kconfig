@@ -5,4 +5,16 @@ menuconfig EBUS
 
 if EBUS
 
+config EBUS_UART_BUFFER_SIZE
+        int "eBUS UART buffer size"
+        default 256
+        range 64 256
+        help
+          eBUS buffer size.
+
+module = EBUS
+module-str = Modbus Support
+module-help = Sets log level for Modbus support
+source "subsys/logging/Kconfig.template.log_config"
+
 endif
