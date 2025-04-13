@@ -2,7 +2,9 @@
 
 menuconfig EBUS
     bool "eBUS support"
-
+    select SERIAL
+    select UART_USE_RUNTIME_CONFIGURE
+    select UART_INTERRUPT_DRIVEN
 if EBUS
 
 config EBUS_UART_BUFFER_SIZE

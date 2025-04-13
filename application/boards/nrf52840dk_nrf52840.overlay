@@ -1,0 +1,30 @@
+&pinctrl {
+	uart1_default_alt: uart1_default_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 14)>,
+					<NRF_PSEL(UART_RX, 0, 16)>;
+		};
+	};
+	/* required if CONFIG_PM_DEVICE=y */
+	uart1_sleep_alt: uart1_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 14)>,
+					<NRF_PSEL(UART_RX, 0, 16)>;
+			low-power-enable;
+		};
+	};
+};
+
+&uart1 {
+	pinctrl-0 = <&uart1_default_alt>;
+	/* if sleep state is not used, use /delete-property/ pinctrl-1; and
+	 * skip the "sleep" entry.
+	 */
+	pinctrl-1 = <&uart1_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	status = "okay";
+	ebus0 {
+		compatible = "zephyr,ebus-serial";
+		status = "okay";
+	};
+};
