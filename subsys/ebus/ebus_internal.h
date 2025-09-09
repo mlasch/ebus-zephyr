@@ -14,9 +14,11 @@ struct ebus_serial_config {
     /* RTU timer to detect frame end point */
     struct k_timer rtu_timer;
     /* Number of bytes received or to send */
-    uint16_t uart_buf_ctr;
+    uint16_t uart_buf_idx;
     /* Storage of received characters or characters to send */
     uint8_t uart_buf[CONFIG_EBUS_UART_BUFFER_SIZE];
+    /* Previous byte received */
+    uint8_t prev_rx_byte;
 };
 
 #define EBUS_STATE_CONFIGURED 0

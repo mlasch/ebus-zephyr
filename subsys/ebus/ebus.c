@@ -31,7 +31,7 @@ static struct ebus_context ebus_ctx_tbl[] = {DT_INST_FOREACH_STATUS_OKAY(EBUS_DT
 static void cb_handler_rx(struct ebus_context *ctx)
 {
     struct ebus_serial_config *cfg = ctx->cfg;
-    char c;
+    uint8_t rx_byte;
     if (!uart_irq_update(cfg->dev)) {
         LOG_ERR("uart_irq_update");
         return;
@@ -41,11 +41,37 @@ static void cb_handler_rx(struct ebus_context *ctx)
         LOG_ERR("uart_irq_rx_ready");
         return;
     }
-    if (uart_fifo_read(cfg->dev, &c, 1) != 1) {
+    if (uart_fifo_read(cfg->dev, &rx_byte, 1) != 1) {
         LOG_ERR("Failed to read UART");
         return;
     }
-    LOG_INF("Received char: %d", c);
+
+    if (ctx->cfg->uart_buf_idx >= CONFIG_EBUS_UART_BUFFER_SIZE) {
+        LOG_ERR("UART buffer overflow");
+        ctx->cfg->uart_buf_idx = 0;
+        return;
+    }
+
+    if (rx_byte == 0xaa) {
+        /* Start of new frame */
+        ctx->cfg->uart_buf_idx = 0;
+        return;
+    }
+
+    if (ctx->cfg->prev_rx_byte == 0xa9) {
+        if (rx_byte == 0x00) {
+            ctx->cfg->uart_buf[ctx->cfg->uart_buf_idx++] = 0xa9;
+            return;
+        }
+        if (rx_byte == 0x01) {
+            ctx->cfg->uart_buf[ctx->cfg->uart_buf_idx++] = 0xaa;
+            return;
+        }
+    }
+
+    ctx->cfg->uart_buf[ctx->cfg->uart_buf_idx++] = rx_byte;
+
+    ctx->cfg->prev_rx_byte = rx_byte;
 }
 
 static void uart_cb_handler(const struct device *dev, void *app_data)
